@@ -1,4 +1,3 @@
-backtesting
 yfinance
 pandas
 numpy
@@ -7,4 +6,3 @@ seaborn
 statsmodels
 plotly
 scikit-learn
-ta-lib; platform_system != "Windows"  # Technical indicators

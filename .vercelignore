@@ -1,0 +1,37 @@
+# Version control
+.git
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Data files
+*.csv
+*.parquet
+*.db
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files (not needed at runtime)
+tests/
+
+# Local entry point (not used by Vercel)
+main.py
+
+# Docs
+README.md
