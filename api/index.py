@@ -1,18 +1,35 @@
 from http.server import BaseHTTPRequestHandler
 import json
+from datetime import datetime
 
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
-        self.send_header("Content-type", "application/json")
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        data = {
+
+        response = {
             "status": "ok",
-            "system": "10k-to-500k Trading System",
-            "description": "Algorithmic pairs trading system targeting 50x growth via disciplined stat-arb.",
-            "endpoints": {
-                "/api/backtest": "Run a KO-PEP pairs trading backtest and return summary metrics.",
-            },
+            "message": "10k-to-500k Trading System API",
+            "time": datetime.now().isoformat(),
+            "features": [
+                "Pairs Trading Strategy",
+                "Grok xAI Streaming Analysis",
+                "Polygon.io Real-time Data",
+                "Genetic Algorithm Optimizer",
+                "E*TRADE Integration (Sandbox)"
+            ]
         }
-        self.wfile.write(json.dumps(data, indent=2).encode())
+        self.wfile.write(json.dumps(response).encode())
+
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+        response = {
+            "status": "success",
+            "message": "Trade signal received"
+        }
+        self.wfile.write(json.dumps(response).encode())
