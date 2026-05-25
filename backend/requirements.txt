@@ -1,0 +1,11 @@
+polygon-api-client
+pyetrade
+deap
+stable-baselines3
+gymnasium
+hmmlearn
+numpy
+pandas
+scikit-learn
+backtesting
+yfinance
