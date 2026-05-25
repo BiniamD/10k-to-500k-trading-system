@@ -27,8 +27,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useMemo } from "react";
-import { useTradingDashboard, type LivePosition, type MetricCard, type RegimeState } from "@/components/dashboard/use-trading-dashboard";
+import { useMemo, type ReactNode } from "react";
+import {
+  useTradingDashboard,
+  type LivePosition,
+  type MetricCard,
+  type RegimeState,
+} from "@/components/dashboard/use-trading-dashboard";
 
 const sidebarItems = [
   { label: "Overview", icon: Layers3 },
@@ -71,7 +76,7 @@ function LiveBadge() {
   );
 }
 
-function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function Panel({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <section className={`glass-panel ${className}`}>{children}</section>;
 }
 
@@ -265,7 +270,7 @@ export function DashboardShell() {
                         border: "1px solid rgba(148, 163, 184, 0.18)",
                         color: "#f8fafc",
                       }}
-                      formatter={(value: number) => [currency(value, 2), "Portfolio"]}
+                      formatter={(value) => [currency(Number(value), 2), "Portfolio"]}
                       labelFormatter={(label) => `Updated ${label}`}
                     />
                     <Area type="monotone" dataKey="value" stroke="#38bdf8" strokeWidth={3} fill="url(#equityFill)" isAnimationActive animationDuration={900} />
@@ -352,7 +357,7 @@ export function DashboardShell() {
                         border: "1px solid rgba(148, 163, 184, 0.18)",
                         color: "#f8fafc",
                       }}
-                      formatter={(value: number) => [number(value), "Shares"]}
+                      formatter={(value) => [number(Number(value)), "Shares"]}
                     />
                     <Bar dataKey="value" radius={[0, 12, 12, 0]} barSize={28} isAnimationActive animationDuration={900}>
                       {orderFlowBars.map((entry) => (

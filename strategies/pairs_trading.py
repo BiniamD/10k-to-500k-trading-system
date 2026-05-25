@@ -18,7 +18,7 @@ class PairsTradingStrategy:
         spread = price2 - hedge_ratio * price1
         # ADF test
         adf = adfuller(spread)
-        return adf[1] < 0.05, hedge_ratio  # p-value < 0.05
+        return bool(adf[1] < 0.05), hedge_ratio  # p-value < 0.05
     
     def generate_signals(self, df, ticker1, ticker2):
         """Generate trading signals."""
