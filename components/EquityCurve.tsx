@@ -2,8 +2,13 @@
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+interface EquityPoint {
+  time: string;
+  equity: number;
+}
+
 export default function EquityCurve() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<EquityPoint[]>([]);
 
   useEffect(() => {
     const generateData = () => {
