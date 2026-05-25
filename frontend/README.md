@@ -1,1 +1,1 @@
-Professional live trading dashboard for 10k-to-500k system
+Complete polished README with architecture and roadmap
