@@ -48,7 +48,7 @@ export type TradingDashboardState = {
   equityCurve: EquityPoint[];
 };
 
-const INITIAL_EQUITY: EquityPoint[] = [
+const INITIAL_EQUITY_SEED: Array<[string, number]> = [
   ["09:30", 10000],
   ["09:33", 10048],
   ["09:36", 10092],
@@ -73,7 +73,9 @@ const INITIAL_EQUITY: EquityPoint[] = [
   ["10:33", 11062],
   ["10:36", 11128],
   ["10:39", 11196],
-].map(([time, value]) => ({ time, value }));
+];
+
+const INITIAL_EQUITY: EquityPoint[] = INITIAL_EQUITY_SEED.map(([time, value]) => ({ time, value }));
 
 const INITIAL_POSITIONS = [
   { symbol: "KO", side: "Long" as const, entryPrice: 61.42, currentPrice: 61.88, quantity: 820 },
