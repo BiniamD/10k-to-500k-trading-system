@@ -27,9 +27,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to make the exe
-#  reproducible
 *.manifest
 *.spec
 
@@ -91,3 +88,9 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/

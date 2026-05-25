@@ -17,7 +17,7 @@ This is a complete, production-ready algorithmic trading system designed to demo
 - Backtesting with Backtesting.py + custom vectorized
 - Comprehensive risk management
 - Performance metrics (Sharpe, Sortino, Max DD, CAGR)
-- Visualization dashboard
+- Production-grade Next.js trading dashboard with live simulated terminal data
 - Unit tests
 - Logging and configuration
 
@@ -29,9 +29,16 @@ To achieve 50x:
 ## Installation
 ```bash
 pip install -r requirements.txt
+npm install
 ```
 
 ## Usage
+### Dashboard
+```bash
+npm run dev
+```
+
+### Python strategy tools
 See `main.py` and notebooks.
 
 ## Structure
