@@ -7,7 +7,6 @@ import PerformanceMetrics from '@/components/PerformanceMetrics';
 import OrderFlowPanel from '@/components/OrderFlowPanel';
 import LivePositions from '@/components/LivePositions';
 import EquityCurve from '@/components/EquityCurve';
-import FintechTrendsPanel from '@/components/FintechTrendsPanel';
 
 export default function Dashboard() {
   const [portfolioValue, setPortfolioValue] = useState(12487.34);
@@ -23,9 +22,6 @@ export default function Dashboard() {
     <div className="min-h-screen text-white">
       <Header portfolioValue={portfolioValue} />
       <div className="max-w-7xl mx-auto p-6">
-        <div className="mb-6">
-          <FintechTrendsPanel />
-        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8"><EquityCurve /></div>
           <div className="lg:col-span-4"><RegimeMonitor /></div>
