@@ -19,12 +19,26 @@ export default function RegimeMonitor() {
     return () => clearInterval(interval);
   }, []);
 
-  const color = regime.state === 'CALM' ? 'emerald' : regime.state === 'BUSY' ? 'amber' : 'rose';
+  const styleMap = {
+    CALM: {
+      badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-400/40',
+      bar: 'bg-emerald-400',
+    },
+    BUSY: {
+      badge: 'bg-amber-500/10 text-amber-300 border-amber-400/40',
+      bar: 'bg-amber-400',
+    },
+    VOLATILE: {
+      badge: 'bg-rose-500/10 text-rose-300 border-rose-400/40',
+      bar: 'bg-rose-400',
+    }
+  } as const;
+  const trendStyle = styleMap[regime.state as keyof typeof styleMap] ?? styleMap.CALM;
 
   return (
     <div className="glass rounded-3xl p-8 h-full">
       <h2 className="text-xl font-semibold mb-6">Market Regime</h2>
-      <motion.div className={`inline-flex items-center px-6 py-3 rounded-2xl text-2xl font-bold mb-8 bg-${color}-500/10 text-${color}-400 border border-${color}-500/30`}>
+      <motion.div className={`inline-flex items-center px-6 py-3 rounded-2xl text-2xl font-bold mb-8 border ${trendStyle.badge}`}>
         {regime.state}
       </motion.div>
       <div className="space-y-6">
@@ -34,7 +48,7 @@ export default function RegimeMonitor() {
             <span>{regime.confidence}%</span>
           </div>
           <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <div className={`h-full bg-${color}-400 rounded-full`} style={{ width: `${regime.confidence}%` }} />
+            <div className={`h-full rounded-full ${trendStyle.bar}`} style={{ width: `${regime.confidence}%` }} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
