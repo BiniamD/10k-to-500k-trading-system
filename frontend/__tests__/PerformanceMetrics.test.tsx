@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PerformanceMetrics } from '../components/PerformanceMetrics';
+import PerformanceMetrics from '@/components/PerformanceMetrics';
 
 describe('PerformanceMetrics', () => {
   it('renders all key metrics', () => {
