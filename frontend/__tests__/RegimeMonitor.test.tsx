@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { RegimeMonitor } from '../components/RegimeMonitor';
+import RegimeMonitor from '@/components/RegimeMonitor';
 
 describe('RegimeMonitor', () => {
   it('renders without crashing', () => {
