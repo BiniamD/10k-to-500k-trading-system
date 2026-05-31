@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Panel from '@/components/ui/Panel';
+import StatusBadge from '@/components/ui/StatusBadge';
 
 export default function OrderFlowPanel() {
   const [buyVol, setBuyVol] = useState(12400);
@@ -15,36 +17,57 @@ export default function OrderFlowPanel() {
 
   const total = buyVol + sellVol;
   const buyPercent = Math.round((buyVol / total) * 100);
+  const pressureTone = buyPercent >= 58 ? 'positive' : buyPercent <= 45 ? 'critical' : 'warning';
 
   return (
-    <div className="glass rounded-3xl p-8">
-      <h2 className="text-xl font-semibold mb-6">Order Flow</h2>
-      <div className="space-y-8">
+    <Panel
+      title="Order Flow"
+      subtitle="Execution pressure and imbalance thresholds for tactical entries."
+      className="lg:col-span-7"
+      actions={<StatusBadge label={`${buyPercent}% Buy Pressure`} tone={pressureTone} />}
+    >
+      <div className="space-y-6">
         <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-emerald-400">Buy Volume</span>
-            <span className="font-mono">{buyVol.toLocaleString()}</span>
+          <div className="flex justify-between mb-2">
+            <span className="text-emerald-400 text-sm">Buy Volume</span>
+            <span className="tabular-nums">{buyVol.toLocaleString()}</span>
           </div>
-          <div className="h-3 bg-emerald-500/20 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-emerald-500/20 rounded-full overflow-hidden">
             <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${buyPercent}%` }} />
           </div>
         </div>
         <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-rose-400">Sell Volume</span>
-            <span className="font-mono">{sellVol.toLocaleString()}</span>
+          <div className="flex justify-between mb-2">
+            <span className="text-rose-400 text-sm">Sell Volume</span>
+            <span className="tabular-nums">{sellVol.toLocaleString()}</span>
           </div>
-          <div className="h-3 bg-rose-500/20 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-rose-500/20 rounded-full overflow-hidden">
             <div className="h-full bg-rose-500 rounded-full" style={{ width: `${100 - buyPercent}%` }} />
           </div>
         </div>
-        <div className="pt-4 border-t border-white/10">
-          <div className="text-center">
-            <span className="text-4xl font-mono font-bold text-emerald-400">{buyPercent}%</span>
-            <p className="text-sm text-zinc-400 mt-1">Buy Pressure</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div className="metric-tile">
+            <p className="metric-label">Total Flow</p>
+            <p className="metric-value tabular-nums">{total.toLocaleString()}</p>
+            <p className="metric-delta-neutral">shares in current window</p>
+          </div>
+          <div className="metric-tile">
+            <p className="metric-label">Imbalance</p>
+            <p className={`metric-value tabular-nums ${buyPercent > 50 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {buyPercent > 50 ? '+' : ''}{buyPercent - 50}%
+            </p>
+            <p className="metric-delta-neutral">vs neutral flow</p>
+          </div>
+          <div className="metric-tile">
+            <p className="metric-label">Action Cue</p>
+            <p className="metric-value text-lg">
+              {buyPercent >= 58 ? 'Lean Long' : buyPercent <= 45 ? 'Defensive' : 'Balanced'}
+            </p>
+            <p className="metric-delta-neutral">based on pressure threshold</p>
           </div>
         </div>
       </div>
-    </div>
+    </Panel>
   );
 }
