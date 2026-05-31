@@ -1,9 +1,11 @@
 'use client';
+import { useState } from 'react';
 import { Activity, ShieldCheck, TrendingUp } from 'lucide-react';
 import StatusBadge from '@/components/ui/StatusBadge';
 
 export default function Header({ portfolioValue }: { portfolioValue: number }) {
   const personas = ['Founder', 'Operator', 'Investor'];
+  const [activePersona, setActivePersona] = useState('Operator');
 
   return (
     <header className="header-shell">
@@ -15,15 +17,16 @@ export default function Header({ portfolioValue }: { portfolioValue: number }) {
           <div>
             <h1 className="text-xl md:text-2xl font-semibold tracking-tight">10k → 500k Command Center</h1>
             <p className="text-xs text-slate-300">Decision-first trading cockpit · high-trust interface</p>
-            <div className="mt-2 flex gap-2 flex-wrap" role="tablist" aria-label="Persona workflow lens">
-              {personas.map((persona, index) => (
+            <div className="mt-2 flex gap-2 flex-wrap" role="radiogroup" aria-label="Persona workflow lens">
+              {personas.map((persona) => (
                 <button
                   key={persona}
                   type="button"
-                  role="tab"
-                  aria-selected={index === 1}
+                  role="radio"
+                  aria-checked={activePersona === persona}
+                  onClick={() => setActivePersona(persona)}
                   className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                    index === 1
+                    activePersona === persona
                       ? 'bg-cyan-500/15 border-cyan-400/40 text-cyan-100'
                       : 'bg-slate-500/10 border-slate-400/30 text-slate-300 hover:bg-slate-500/20'
                   }`}

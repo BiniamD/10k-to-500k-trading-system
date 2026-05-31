@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/components/ui/Panel';
 import StatusBadge from '@/components/ui/StatusBadge';
+import MetricTile from '@/components/ui/MetricTile';
 
 export default function OrderFlowPanel() {
   const [buyVol, setBuyVol] = useState(12400);
@@ -47,25 +48,19 @@ export default function OrderFlowPanel() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="metric-tile">
-            <p className="metric-label">Total Flow</p>
-            <p className="metric-value tabular-nums">{total.toLocaleString()}</p>
-            <p className="metric-delta-neutral">shares in current window</p>
-          </div>
-          <div className="metric-tile">
-            <p className="metric-label">Imbalance</p>
-            <p className={`metric-value tabular-nums ${buyPercent > 50 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {buyPercent > 50 ? '+' : ''}{buyPercent - 50}%
-            </p>
-            <p className="metric-delta-neutral">vs neutral flow</p>
-          </div>
-          <div className="metric-tile">
-            <p className="metric-label">Action Cue</p>
-            <p className="metric-value text-lg">
-              {buyPercent >= 58 ? 'Lean Long' : buyPercent <= 45 ? 'Defensive' : 'Balanced'}
-            </p>
-            <p className="metric-delta-neutral">based on pressure threshold</p>
-          </div>
+          <MetricTile label="Total Flow" value={total.toLocaleString()} delta="shares in current window" tone="neutral" />
+          <MetricTile
+            label="Imbalance"
+            value={`${buyPercent > 50 ? '+' : ''}${buyPercent - 50}%`}
+            delta="vs neutral flow"
+            tone={buyPercent >= 50 ? 'positive' : 'negative'}
+          />
+          <MetricTile
+            label="Action Cue"
+            value={buyPercent >= 58 ? 'Lean Long' : buyPercent <= 45 ? 'Defensive' : 'Balanced'}
+            delta="based on pressure threshold"
+            tone="neutral"
+          />
         </div>
       </div>
     </Panel>

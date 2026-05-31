@@ -35,12 +35,14 @@ export default function EquityCurve() {
       title="Portfolio Equity"
       subtitle="Relative performance versus benchmark with drawdown context."
       actions={
-        <div className="flex gap-2" role="tablist" aria-label="Equity timeframe">
+        <div className="flex gap-2 flex-nowrap" role="tablist" aria-label="Equity timeframe" aria-orientation="horizontal">
           {(['1H', '4H', '1D'] as const).map((value) => (
             <button
               key={value}
               type="button"
               role="tab"
+              id={`equity-tab-${value}`}
+              aria-controls="equity-chart-panel"
               aria-selected={timeframe === value}
               onClick={() => setTimeframe(value)}
               className={`px-3 py-1 rounded-lg text-xs border ${
@@ -66,7 +68,13 @@ export default function EquityCurve() {
           <p className="text-2xl font-semibold tabular-nums">$12,487.34</p>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height="80%">
+      <div
+        role="tabpanel"
+        id="equity-chart-panel"
+        aria-live="polite"
+        aria-labelledby={`equity-tab-${timeframe}`}
+      >
+        <ResponsiveContainer width="100%" height={340}>
         <AreaChart data={data} margin={{ left: -10, right: 8, top: 4, bottom: 0 }}>
           <defs>
             <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
@@ -87,7 +95,8 @@ export default function EquityCurve() {
           <Line type="monotone" dataKey="benchmark" stroke="#94a3b8" strokeDasharray="4 4" dot={false} />
           <Line type="monotone" dataKey="drawdown" stroke="#fb7185" strokeWidth={1.4} dot={false} />
         </AreaChart>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </div>
     </Panel>
   );
 }

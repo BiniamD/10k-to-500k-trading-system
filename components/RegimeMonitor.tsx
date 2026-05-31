@@ -42,7 +42,7 @@ export default function RegimeMonitor() {
   return (
     <Panel
       title="Market Regime"
-      subtitle="Execution environment with confidence and toxicity signals."
+      subtitle="Execution environment with toxicity and imbalance signals."
       className="lg:col-span-4 h-full"
       actions={<StatusBadge label={regime.state} tone={tone} />}
     >
@@ -77,12 +77,12 @@ export default function RegimeMonitor() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-500/30 bg-slate-500/10 px-3 py-2 text-sm text-slate-200">
+        <div className="rounded-xl border border-slate-500/30 bg-slate-500/10 px-3 py-2 text-sm text-slate-200" role="status" aria-live="polite">
           {regime.state === 'VOLATILE'
             ? 'Reduce order size and enforce wider slippage controls.'
             : regime.state === 'BUSY'
               ? 'Prioritize high-conviction setups and tighten entry thresholds.'
-              : 'Normal execution posture. Model confidence remains stable.'}
+              : 'Normal execution posture. Model quality remains stable.'}
         </div>
       </div>
     </Panel>
