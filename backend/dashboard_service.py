@@ -9,6 +9,9 @@ from utils.data_fetcher import fetch_pair_data
 
 
 _CACHE: Dict[str, Any] = {"expires_at": 0.0, "payload": None}
+TRADING_DAYS_PER_YEAR = 252
+DEFAULT_DRAWDOWN_WARNING_THRESHOLD = 10
+FLOAT_EPSILON = 1e-9
 
 
 def _to_float(value, digits=4):
@@ -52,6 +55,14 @@ def _build_from_prices(df: pd.DataFrame, ticker1: str, ticker2: str, initial_cap
     completed_trades = int(signals["exit"].sum())
     winning_days = int((strategy_return > 0).sum())
     active_days = int((strategy_return != 0).sum()) or 1
+    sharpe_ratio = _to_float(
+        strategy_return.mean() / (strategy_return.std() or FLOAT_EPSILON) * (TRADING_DAYS_PER_YEAR ** 0.5),
+        2,
+    )
+    profit_factor = _to_float(
+        strategy_return[strategy_return > 0].sum() / abs(strategy_return[strategy_return < 0].sum() or FLOAT_EPSILON),
+        2,
+    )
 
     volatility = spread_return.tail(30).std() * 100
     latest_zscore = _to_float(signals["zscore"].iloc[-1], 3)
@@ -112,9 +123,9 @@ def _build_from_prices(df: pd.DataFrame, ticker1: str, ticker2: str, initial_cap
 
     metrics = [
         {"label": "Win Rate", "value": f"{(winning_days / active_days) * 100:.1f}%", "change": "strategy active-day ratio", "tone": "positive"},
-        {"label": "Sharpe Ratio", "value": f"{(_to_float(strategy_return.mean() / (strategy_return.std() or 1e-9) * (252 ** 0.5), 2)):.2f}", "change": "rolling estimate", "tone": "positive"},
-        {"label": "Max Drawdown", "value": f"{drawdown.max():.2f}%", "change": "peak-to-trough", "tone": "negative" if drawdown.max() > 10 else "positive"},
-        {"label": "Profit Factor", "value": f"{((_to_float(strategy_return[strategy_return > 0].sum() / abs(strategy_return[strategy_return < 0].sum() or 1e-9), 2))):.2f}", "change": "gross gain/loss", "tone": "positive"},
+        {"label": "Sharpe Ratio", "value": f"{sharpe_ratio:.2f}", "change": "rolling estimate", "tone": "positive"},
+        {"label": "Max Drawdown", "value": f"{drawdown.max():.2f}%", "change": "peak-to-trough", "tone": "negative" if drawdown.max() > DEFAULT_DRAWDOWN_WARNING_THRESHOLD else "positive"},
+        {"label": "Profit Factor", "value": f"{profit_factor:.2f}", "change": "gross gain/loss", "tone": "positive"},
         {"label": "Avg Trade", "value": f"${_to_float((equity.iloc[-1] - initial_capital) / max(completed_trades, 1), 2):,.2f}", "change": "per completed trade", "tone": "neutral"},
         {"label": "Total Trades", "value": str(completed_trades), "change": "completed entries", "tone": "neutral"},
     ]

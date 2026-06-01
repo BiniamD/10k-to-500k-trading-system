@@ -23,9 +23,7 @@ export function useApiData<T>(path: string, refreshMs = 0): ApiState<T> {
 
     const load = async () => {
       try {
-        if (isMounted && data === null) {
-          setLoading(true);
-        }
+        if (isMounted) setLoading(true);
         const next = await fetchApi<T>(path, controller.signal);
         if (!isMounted) return;
         setData(next);
@@ -48,7 +46,6 @@ export function useApiData<T>(path: string, refreshMs = 0): ApiState<T> {
       if (interval) clearInterval(interval);
       if (retryTimeout) clearTimeout(retryTimeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path, refreshMs, retryTick]);
 
   return { data, loading, error };

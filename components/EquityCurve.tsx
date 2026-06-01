@@ -73,11 +73,26 @@ export default function EquityCurve() {
               <p className="text-2xl font-semibold tabular-nums">${equity.currentEquity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
           </div>
+          <div className="flex flex-wrap gap-4 text-xs text-slate-300 mb-3" aria-label="Equity chart legend">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0.5 bg-cyan-400" aria-hidden="true" />
+              <span>Portfolio Equity</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0.5 border-t border-dashed border-slate-300" aria-hidden="true" />
+              <span>Benchmark</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0.5 bg-rose-400" aria-hidden="true" />
+              <span>Drawdown</span>
+            </div>
+          </div>
           <div
             role="tabpanel"
             id="equity-chart-panel"
             aria-live="polite"
             aria-labelledby={`equity-tab-${timeframe}`}
+            aria-label="Portfolio equity, benchmark, and drawdown chart"
           >
             <ResponsiveContainer width="100%" height={340}>
             <AreaChart data={series} margin={{ left: -10, right: 8, top: 4, bottom: 0 }}>

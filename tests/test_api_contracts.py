@@ -28,6 +28,9 @@ class TestApiContracts(unittest.TestCase):
 
         serialized = json.dumps(snapshot)
         self.assertIsInstance(serialized, str)
+        deserialized = json.loads(serialized)
+        self.assertIn("header", deserialized)
+        self.assertIn("meta", deserialized)
 
     @patch("backend.dashboard_service.fetch_pair_data")
     def test_backtest_summary_uses_contract_data(self, mock_fetch_pair_data):
