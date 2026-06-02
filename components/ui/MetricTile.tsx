@@ -16,9 +16,9 @@ export default function MetricTile({
   } as const;
 
   return (
-    <article className="metric-tile">
+    <article className="metric-tile" aria-label={label}>
       <p className="metric-label">{label}</p>
-      <p className="metric-value">{value}</p>
+      <p className="metric-value tabular-nums">{value}</p>
       <p className={toneClasses[tone]}>{delta}</p>
     </article>
   );

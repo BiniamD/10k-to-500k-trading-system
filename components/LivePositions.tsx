@@ -1,4 +1,5 @@
 'use client';
+
 import Panel from '@/components/ui/Panel';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useApiData } from '@/frontend/hooks/useApiData';
@@ -19,8 +20,8 @@ export default function LivePositions() {
   return (
     <Panel
       title="Live Positions"
-      subtitle="Position detail with risk visibility and aligned trade language."
-      className="lg:col-span-5 h-full"
+      subtitle="Refined risk table with clearer trade context and tighter visual hierarchy."
+      className="lg:col-span-5"
       actions={<StatusBadge label={loading && !data ? 'Loading' : `${positions.length} active`} tone={error ? 'critical' : 'info'} />}
     >
       {error ? (
@@ -31,35 +32,32 @@ export default function LivePositions() {
         <p className="text-sm text-slate-300">No active positions.</p>
       ) : (
         <div className="overflow-x-auto" role="table" aria-label="Live positions table">
-          <div className="min-w-[640px]" role="rowgroup">
-            <div className="table-row table-head mb-2" role="row">
+          <div className="min-w-[660px] space-y-2" role="rowgroup">
+            <div className="table-row table-head" role="row">
               <span role="columnheader">Pair</span>
               <span role="columnheader">Qty</span>
               <span role="columnheader">Entry</span>
               <span role="columnheader">Current</span>
               <span role="columnheader">PnL</span>
             </div>
-          </div>
-          <div className="space-y-2 min-w-[640px]" role="rowgroup">
             {positions.map((pos) => (
               <div key={pos.symbol} className="table-row" role="row">
-              <div role="cell">
-                <p className="font-medium tracking-wide">{pos.symbol}</p>
-                <p className={`text-xs ${pos.side === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {pos.side} • {pos.risk} risk
-                </p>
-              </div>
-              <p className="tabular-nums" role="cell">{pos.qty}</p>
-              <p className="tabular-nums" role="cell">${pos.entry.toFixed(2)}</p>
-              <p className="tabular-nums" role="cell">${pos.current.toFixed(2)}</p>
-              <div role="cell">
-                <p className={`tabular-nums ${pos.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {pnlFormatter.format(pos.pnl)}
-                </p>
-                <p className={`text-xs ${pos.percent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {pos.percent >= 0 ? '+' : ''}{pos.percent.toFixed(2)}%
-                </p>
-              </div>
+                <div role="cell">
+                  <p className="font-medium tracking-wide">{pos.symbol}</p>
+                  <p className={`text-xs ${pos.side === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {pos.side} • {pos.risk} risk
+                  </p>
+                </div>
+                <p className="tabular-nums" role="cell">{pos.qty}</p>
+                <p className="tabular-nums" role="cell">${pos.entry.toFixed(2)}</p>
+                <p className="tabular-nums" role="cell">${pos.current.toFixed(2)}</p>
+                <div role="cell">
+                  <p className={`tabular-nums ${pos.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{pnlFormatter.format(pos.pnl)}</p>
+                  <p className={`text-xs ${pos.percent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {pos.percent >= 0 ? '+' : ''}
+                    {pos.percent.toFixed(2)}%
+                  </p>
+                </div>
               </div>
             ))}
           </div>

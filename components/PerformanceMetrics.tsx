@@ -1,4 +1,5 @@
 'use client';
+
 import Panel from '@/components/ui/Panel';
 import MetricTile from '@/components/ui/MetricTile';
 import StatusBadge from '@/components/ui/StatusBadge';
@@ -12,7 +13,7 @@ export default function PerformanceMetrics() {
   return (
     <Panel
       title="Performance Metrics"
-      subtitle="At-a-glance health indicators optimized for fast decision scanning."
+      subtitle="Fast, normalized KPI strip to keep execution quality visible in one pass."
       className="lg:col-span-12"
       actions={<StatusBadge label={error ? 'Data error' : loading && !data ? 'Loading' : 'Live'} tone={error ? 'critical' : 'info'} />}
     >

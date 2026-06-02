@@ -1,4 +1,5 @@
 'use client';
+
 import Panel from '@/components/ui/Panel';
 import StatusBadge from '@/components/ui/StatusBadge';
 import MetricTile from '@/components/ui/MetricTile';
@@ -17,7 +18,7 @@ export default function OrderFlowPanel() {
   return (
     <Panel
       title="Order Flow"
-      subtitle="Execution pressure and imbalance thresholds for tactical entries."
+      subtitle="Rebuilt pressure breakdown for cleaner tactical reads and faster reaction windows."
       className="lg:col-span-7"
       actions={<StatusBadge label={loading && !data ? 'Loading' : `${buyPercent}% Buy Pressure`} tone={error ? 'critical' : pressureTone} />}
     >
@@ -28,27 +29,29 @@ export default function OrderFlowPanel() {
       ) : total === 0 ? (
         <p className="text-sm text-slate-300">No order-flow data available.</p>
       ) : (
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between mb-2">
-              <span className="text-emerald-400 text-sm">Buy Volume</span>
-              <span className="tabular-nums">{buyVol.toLocaleString()}</span>
+        <div className="space-y-5">
+          <div className="space-y-4 rounded-xl border border-slate-500/30 bg-slate-500/10 p-4">
+            <div>
+              <div className="mb-2 flex justify-between">
+                <span className="text-sm text-emerald-300">Buy Volume</span>
+                <span className="tabular-nums text-sm">{buyVol.toLocaleString()}</span>
+              </div>
+              <div className="h-2.5 overflow-hidden rounded-full bg-emerald-500/20">
+                <div className="h-full rounded-full bg-emerald-400" style={{ width: `${buyPercent}%` }} />
+              </div>
             </div>
-            <div className="h-2.5 bg-emerald-500/20 rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${buyPercent}%` }} />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between mb-2">
-              <span className="text-rose-400 text-sm">Sell Volume</span>
-              <span className="tabular-nums">{sellVol.toLocaleString()}</span>
-            </div>
-            <div className="h-2.5 bg-rose-500/20 rounded-full overflow-hidden">
-              <div className="h-full bg-rose-500 rounded-full" style={{ width: `${100 - buyPercent}%` }} />
+            <div>
+              <div className="mb-2 flex justify-between">
+                <span className="text-sm text-rose-300">Sell Volume</span>
+                <span className="tabular-nums text-sm">{sellVol.toLocaleString()}</span>
+              </div>
+              <div className="h-2.5 overflow-hidden rounded-full bg-rose-500/20">
+                <div className="h-full rounded-full bg-rose-400" style={{ width: `${100 - buyPercent}%` }} />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <MetricTile label="Total Flow" value={total.toLocaleString()} delta="shares in current window" tone="neutral" />
             <MetricTile
               label="Imbalance"
@@ -56,12 +59,7 @@ export default function OrderFlowPanel() {
               delta="vs neutral flow"
               tone={buyPercent >= 50 ? 'positive' : 'negative'}
             />
-            <MetricTile
-              label="Action Cue"
-              value={data?.actionCue ?? 'Balanced'}
-              delta="based on pressure threshold"
-              tone="neutral"
-            />
+            <MetricTile label="Action Cue" value={data?.actionCue ?? 'Balanced'} delta="based on pressure threshold" tone="neutral" />
           </div>
         </div>
       )}

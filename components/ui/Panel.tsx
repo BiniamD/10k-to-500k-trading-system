@@ -20,9 +20,9 @@ export default function Panel({
           <h2 className="panel-title">{title}</h2>
           {subtitle ? <p className="panel-subtitle">{subtitle}</p> : null}
         </div>
-        {actions ? <div>{actions}</div> : null}
+        {actions ? <div className="flex shrink-0 items-start">{actions}</div> : null}
       </header>
-      {children}
+      <div className="panel-body">{children}</div>
     </section>
   );
 }

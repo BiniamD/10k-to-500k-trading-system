@@ -10,17 +10,17 @@ import FintechTrendsPanel from '@/components/FintechTrendsPanel';
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen text-white">
+    <div className="dashboard-root">
       <Header />
       <main className="dashboard-shell" aria-label="Trading dashboard">
-        <div className="dashboard-grid">
+        <section className="dashboard-grid" aria-label="Trading dashboard modules">
           <EquityCurve />
           <RegimeMonitor />
           <PerformanceMetrics />
           <OrderFlowPanel />
           <LivePositions />
           <FintechTrendsPanel />
-        </div>
+        </section>
       </main>
     </div>
   );
