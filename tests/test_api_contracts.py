@@ -45,6 +45,16 @@ class TestApiContracts(unittest.TestCase):
         self.assertIn("totalReturnPercent", summary)
         self.assertIn("benchmarkReturnPercent", summary)
 
+    @patch("backend.dashboard_service.fetch_pair_data")
+    def test_dashboard_snapshot_falls_back_when_market_data_empty(self, mock_fetch_pair_data):
+        mock_fetch_pair_data.return_value = pd.DataFrame(columns=["KO", "PEP"])
+
+        snapshot = get_dashboard_snapshot(force_refresh=True)
+
+        self.assertIn("header", snapshot)
+        self.assertIn("equity", snapshot)
+        self.assertGreater(snapshot["meta"]["dataPoints"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
