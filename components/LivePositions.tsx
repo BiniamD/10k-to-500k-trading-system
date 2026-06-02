@@ -30,8 +30,8 @@ export default function LivePositions() {
       ) : positions.length === 0 ? (
         <p className="text-sm text-slate-300">No active positions.</p>
       ) : (
-        <div role="table" aria-label="Live positions table">
-          <div role="rowgroup">
+        <div className="overflow-x-auto" role="table" aria-label="Live positions table">
+          <div className="min-w-[640px]" role="rowgroup">
             <div className="table-row table-head mb-2" role="row">
               <span role="columnheader">Pair</span>
               <span role="columnheader">Qty</span>
@@ -40,9 +40,9 @@ export default function LivePositions() {
               <span role="columnheader">PnL</span>
             </div>
           </div>
-          <div className="space-y-2" role="rowgroup">
+          <div className="space-y-2 min-w-[640px]" role="rowgroup">
             {positions.map((pos) => (
-              <article key={pos.symbol} className="table-row" role="row">
+              <div key={pos.symbol} className="table-row" role="row">
               <div role="cell">
                 <p className="font-medium tracking-wide">{pos.symbol}</p>
                 <p className={`text-xs ${pos.side === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -60,7 +60,7 @@ export default function LivePositions() {
                   {pos.percent >= 0 ? '+' : ''}{pos.percent.toFixed(2)}%
                 </p>
               </div>
-              </article>
+              </div>
             ))}
           </div>
         </div>

@@ -18,7 +18,7 @@ export default function Header() {
   return (
     <header className="header-shell">
       <div className="header-inner">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 min-w-0">
           <div className="w-10 h-10 bg-cyan-400/15 rounded-xl flex items-center justify-center border border-cyan-300/30">
             <TrendingUp className="w-5 h-5 text-cyan-200" />
           </div>
@@ -46,13 +46,13 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="flex items-start gap-4 md:gap-7 flex-wrap">
-          <div className="text-right">
+        <div className="flex w-full md:w-auto items-start gap-4 md:gap-7 flex-wrap md:justify-end">
+          <div className="text-left md:text-right">
             <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">Portfolio Equity</p>
             <p className="text-2xl md:text-3xl font-semibold tabular-nums">
               {loading && !data ? 'Loading…' : `$${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             </p>
-            <div className={`flex items-center justify-end gap-1 text-sm ${pnlValue >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <div className={`flex items-center justify-start md:justify-end gap-1 text-sm ${pnlValue >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               <TrendingUp className="w-4 h-4" /> {pnlValue >= 0 ? '+' : ''}${Math.abs(pnlValue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
             </div>
           </div>

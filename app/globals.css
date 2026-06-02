@@ -201,6 +201,7 @@ a:focus-visible,
   padding: 1rem;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
   flex-wrap: wrap;
 }
@@ -229,15 +230,16 @@ a:focus-visible,
 }
 
 @media (max-width: 768px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
 
   .metric-grid {
     grid-template-columns: 1fr;
-  }
-
-  .table-row {
-    grid-template-columns: 1fr 1fr;
   }
 }
