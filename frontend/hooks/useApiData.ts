@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { fetchApi } from '@/frontend/lib/api';
+import { fetchApi } from '@/frontend/utils/api';
 
 interface ApiState<T> {
   data: T | null;
