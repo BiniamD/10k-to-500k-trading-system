@@ -38,5 +38,5 @@ export async function fetchApi<T>(path: string, signal?: AbortSignal): Promise<T
     return payload.data;
   }
 
-  return payload as T;
+  throw new Error('Unexpected API response shape');
 }
