@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 
 export default function Panel({
   title,
-  subtitle,
   actions,
   children,
   className = '',
@@ -16,11 +15,8 @@ export default function Panel({
   return (
     <section className={`panel ${className}`} aria-label={title}>
       <header className="panel-header">
-        <div>
-          <h2 className="panel-title">{title}</h2>
-          {subtitle ? <p className="panel-subtitle">{subtitle}</p> : null}
-        </div>
-        {actions ? <div className="flex shrink-0 items-start">{actions}</div> : null}
+        <h2 className="panel-title">{title}</h2>
+        {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
       </header>
       <div className="panel-body">{children}</div>
     </section>

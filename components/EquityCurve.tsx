@@ -1,132 +1,167 @@
 'use client';
 
 import { useState } from 'react';
-import { AreaChart, Area, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  AreaChart, Area, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine,
+} from 'recharts';
 import Panel from '@/components/ui/Panel';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useApiData } from '@/frontend/hooks/useApiData';
 import { EquityData, EquityPoint } from '@/frontend/types/dashboard';
 
-const emptyData: EquityData = {
-  timeframes: {
-    '1H': [],
-    '4H': [],
-    '1D': [],
-  },
+type TF = '1H' | '4H' | '1D';
+
+const EMPTY: EquityData = {
+  timeframes: { '1H': [], '4H': [], '1D': [] },
   sessionChangePercent: 0,
   currentDrawdownPercent: 0,
   currentEquity: 0,
 };
 
 export default function EquityCurve() {
-  const [timeframe, setTimeframe] = useState<'1H' | '4H' | '1D'>('1H');
+  const [tf, setTf] = useState<TF>('1H');
   const { data, loading, error } = useApiData<EquityData>('/api/equity', 5000);
 
-  const equity = data ?? emptyData;
-  const series: EquityPoint[] = equity.timeframes[timeframe] ?? [];
+  const eq: EquityData = data ?? EMPTY;
+  const series: EquityPoint[] = eq.timeframes[tf] ?? [];
+
+  const changePct  = eq.sessionChangePercent;
+  const drawdownPct = eq.currentDrawdownPercent;
 
   return (
     <Panel
-      title="Portfolio Equity"
-      subtitle="Rebuilt trend workspace with benchmark context and drawdown visibility."
+      title="Equity Curve"
+      className="lg:col-span-8"
       actions={
-        <div className="flex flex-nowrap gap-2" role="tablist" aria-label="Equity timeframe" aria-orientation="horizontal">
-          {(['1H', '4H', '1D'] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              id={`equity-tab-${value}`}
-              aria-controls="equity-chart-panel"
-              aria-selected={timeframe === value}
-              onClick={() => setTimeframe(value)}
-              className={`rounded-lg border px-3 py-1 text-xs ${
-                timeframe === value
-                  ? 'border-cyan-300/50 bg-cyan-500/20 text-cyan-100'
-                  : 'border-slate-400/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20'
-              }`}
-            >
-              {value}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1" role="tablist" aria-label="Timeframe">
+            {(['1H', '4H', '1D'] as TF[]).map((v) => (
+              <button
+                key={v}
+                type="button"
+                role="tab"
+                aria-selected={tf === v}
+                onClick={() => setTf(v)}
+                style={{
+                  background: tf === v ? 'var(--bg-raised)' : 'transparent',
+                  border: `1px solid ${tf === v ? 'var(--border)' : 'transparent'}`,
+                  color: tf === v ? 'var(--text)' : 'var(--text-dim)',
+                  borderRadius: '3px',
+                  padding: '0.2rem 0.5rem',
+                  fontSize: '0.7rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+          <StatusBadge
+            label={error ? 'Error' : loading && !data ? '…' : `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`}
+            tone={error ? 'critical' : changePct >= 0 ? 'positive' : 'critical'}
+          />
         </div>
       }
-      className="lg:col-span-8"
     >
       {error ? (
-        <p className="text-sm text-rose-300">Unable to load equity data: {error}</p>
+        <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{error}</p>
       ) : loading && series.length === 0 ? (
-        <p className="text-sm text-slate-300">Loading equity curve…</p>
+        <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>Loading…</p>
       ) : series.length === 0 ? (
-        <p className="text-sm text-slate-300">No equity data available.</p>
+        <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>No data</p>
       ) : (
         <>
-          <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-slate-500/30 bg-slate-500/10 p-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusBadge
-                label={`${equity.sessionChangePercent >= 0 ? '+' : ''}${equity.sessionChangePercent.toFixed(2)}% Session`}
-                tone={equity.sessionChangePercent >= 0 ? 'positive' : 'critical'}
-              />
-              <StatusBadge label={`Drawdown ${equity.currentDrawdownPercent.toFixed(2)}%`} tone="warning" />
+          {/* stat bar */}
+          <div style={{
+            display: 'flex',
+            gap: '1.5rem',
+            padding: '0.5rem 0.75rem',
+            background: 'var(--bg-inset)',
+            border: '1px solid var(--border-muted)',
+            borderRadius: '3px',
+          }}>
+            <div>
+              <div style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Equity</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '1rem' }}>
+                ${eq.currentEquity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Current Equity</p>
-              <p className="text-2xl font-semibold tabular-nums">
-                ${equity.currentEquity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
+            <div>
+              <div style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Session</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '1rem', color: changePct >= 0 ? 'var(--green)' : 'var(--red)' }}>
+                {changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4 text-xs text-slate-300" aria-label="Equity chart legend">
-            <div className="flex items-center gap-2">
-              <span className="h-0.5 w-4 bg-cyan-400" aria-hidden="true" />
-              <span>Portfolio Equity</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-0.5 w-4 border-t border-dashed border-slate-300" aria-hidden="true" />
-              <span>Benchmark</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-0.5 w-4 bg-rose-400" aria-hidden="true" />
-              <span>Drawdown</span>
+            <div>
+              <div style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Drawdown</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '1rem', color: drawdownPct > 5 ? 'var(--red)' : 'var(--text-dim)' }}>
+                {drawdownPct.toFixed(2)}%
+              </div>
             </div>
           </div>
 
-          <div
-            role="tabpanel"
-            id="equity-chart-panel"
-            aria-live="polite"
-            aria-labelledby={`equity-tab-${timeframe}`}
-            aria-label="Portfolio equity, benchmark, and drawdown chart"
-            className="h-[340px]"
-          >
+          {/* chart */}
+          <div style={{ height: 300 }} aria-label="Equity chart">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={series} margin={{ left: -10, right: 8, top: 6, bottom: 0 }}>
+              <AreaChart data={series} margin={{ left: -12, right: 4, top: 4, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2dd4ff" stopOpacity={0.7} />
-                    <stop offset="95%" stopColor="#2dd4ff" stopOpacity={0.06} />
+                  <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stopColor="#00b8ff" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#00b8ff" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="time" stroke="#88a1ca" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#88a1ca" tick={{ fontSize: 10 }} />
+                <XAxis
+                  dataKey="time"
+                  stroke="#3d5070"
+                  tick={{ fontSize: 10, fill: '#4a5a7a', fontFamily: 'var(--font-mono)' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  stroke="#3d5070"
+                  tick={{ fontSize: 10, fill: '#4a5a7a', fontFamily: 'var(--font-mono)' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#071025',
-                    border: '1px solid #36517a',
-                    borderRadius: '10px',
-                    color: '#d8e7ff',
+                    background: '#0d1117',
+                    border: '1px solid #1f2d45',
+                    borderRadius: '3px',
+                    fontSize: '0.75rem',
+                    fontFamily: 'var(--font-mono)',
+                    color: '#dce8ff',
                   }}
+                  itemStyle={{ color: '#dce8ff' }}
                   formatter={(value: number, name: string) => [
-                    name === 'drawdown' ? `${value.toFixed(2)}%` : `$${Number(value).toFixed(2)}`,
-                    name === 'equity' ? 'Portfolio' : name === 'benchmark' ? 'Benchmark' : 'Drawdown',
+                    name === 'drawdown' ? `${value.toFixed(2)}%` : `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                    name === 'equity' ? 'Equity' : name === 'benchmark' ? 'Benchmark' : 'Drawdown',
                   ]}
                 />
-                <Area type="monotone" dataKey="equity" stroke="#2dd4ff" strokeWidth={2} fill="url(#equityGradient)" />
-                <Line type="monotone" dataKey="benchmark" stroke="#a5b4d4" strokeDasharray="4 4" dot={false} />
-                <Line type="monotone" dataKey="drawdown" stroke="#fb7185" strokeWidth={1.4} dot={false} />
+                <ReferenceLine y={series[0]?.equity} stroke="#3d5070" strokeDasharray="3 3" />
+                <Area type="monotone" dataKey="equity" stroke="#00b8ff" strokeWidth={1.5} fill="url(#eqGrad)" dot={false} />
+                <Line type="monotone" dataKey="benchmark" stroke="#3d5070" strokeDasharray="4 3" strokeWidth={1} dot={false} />
+                <Line type="monotone" dataKey="drawdown" stroke="#ff3355" strokeWidth={1} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* legend */}
+          <div style={{ display: 'flex', gap: '1rem', fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ display: 'inline-block', width: 12, height: 2, background: '#00b8ff' }} />
+              Equity
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ display: 'inline-block', width: 12, height: 2, background: '#3d5070', borderTop: '1px dashed #3d5070' }} />
+              Benchmark
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ display: 'inline-block', width: 12, height: 2, background: '#ff3355' }} />
+              Drawdown
+            </span>
           </div>
         </>
       )}
