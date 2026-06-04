@@ -1,27 +1,35 @@
 'use client';
 
-const metrics = [
-  { label: "Win Rate", value: "68.4%", change: "+4.2%" },
-  { label: "Sharpe Ratio", value: "2.41", change: "+0.18" },
-  { label: "Max Drawdown", value: "6.8%", change: "-1.1%" },
-  { label: "Profit Factor", value: "2.87", change: "+0.31" },
-  { label: "Avg Trade", value: "$184", change: "+$27" },
-  { label: "Total Trades", value: "142", change: "+19" },
-];
+import Panel from '@/components/ui/Panel';
+import MetricTile from '@/components/ui/MetricTile';
+import StatusBadge from '@/components/ui/StatusBadge';
+import { useApiData } from '@/frontend/hooks/useApiData';
+import { PerformanceData } from '@/frontend/types/dashboard';
 
 export default function PerformanceMetrics() {
+  const { data, loading, error } = useApiData<PerformanceData>('/api/performance', 30000);
+  const metrics = data?.metrics ?? [];
+
   return (
-    <div className="glass rounded-3xl p-8">
-      <h2 className="text-xl font-semibold mb-8">Performance Metrics</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {metrics.map((metric, index) => (
-          <div key={index} className="bg-white/5 rounded-2xl p-6 hover:bg-white/10 transition-all">
-            <div className="text-zinc-400 text-sm mb-2">{metric.label}</div>
-            <div className="text-3xl font-mono font-semibold mb-1">{metric.value}</div>
-            <div className="text-emerald-400 text-sm">{metric.change} this month</div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Panel
+      title="Performance Metrics"
+      subtitle="Fast, normalized KPI strip to keep execution quality visible in one pass."
+      className="lg:col-span-12"
+      actions={<StatusBadge label={error ? 'Data error' : loading && !data ? 'Loading' : 'Live'} tone={error ? 'critical' : 'info'} />}
+    >
+      {error ? (
+        <p className="text-sm text-rose-300">Unable to load performance metrics: {error}</p>
+      ) : loading && metrics.length === 0 ? (
+        <p className="text-sm text-slate-300">Loading performance metrics…</p>
+      ) : metrics.length === 0 ? (
+        <p className="text-sm text-slate-300">No performance metrics available.</p>
+      ) : (
+        <div className="metric-grid lg:grid-cols-6">
+          {metrics.map((metric) => (
+            <MetricTile key={metric.label} label={metric.label} value={metric.value} delta={metric.change} tone={metric.tone} />
+          ))}
+        </div>
+      )}
+    </Panel>
   );
 }

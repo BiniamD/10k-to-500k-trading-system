@@ -1,28 +1,81 @@
 'use client';
-import { TrendingUp, Activity } from 'lucide-react';
 
-export default function Header({ portfolioValue }: { portfolioValue: number }) {
+import { useState } from 'react';
+import { Activity, ShieldCheck, TrendingUp } from 'lucide-react';
+import StatusBadge from '@/components/ui/StatusBadge';
+import { useApiData } from '@/frontend/hooks/useApiData';
+import { HeaderData } from '@/frontend/types/dashboard';
+
+export default function Header() {
+  const personas = ['Founder', 'Operator', 'Investor'];
+  const [activePersona, setActivePersona] = useState('Operator');
+  const { data, loading, error } = useApiData<HeaderData>('/api/portfolio', 5000);
+
+  const portfolioValue = data?.portfolioValue ?? 0;
+  const pnlValue = data?.pnlValue ?? 0;
+  const pnlPercent = data?.pnlPercent ?? 0;
+  const riskBudgetPercent = data?.riskBudgetPercent ?? 0;
+  const riskTone = riskBudgetPercent >= 85 ? 'critical' : riskBudgetPercent >= 65 ? 'warning' : 'positive';
+
   return (
-    <header className="border-b border-slate-400/15 bg-[#05090f]/80 backdrop-blur-xl sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 bg-cyan-400/20 rounded-xl flex items-center justify-center border border-cyan-300/40">
-            <TrendingUp className="w-5 h-5 text-cyan-300" />
+    <header className="header-shell">
+      <div className="header-inner">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-300/35 bg-cyan-400/15 shadow-lg shadow-cyan-500/10">
+            <TrendingUp className="h-5 w-5 text-cyan-100" />
           </div>
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">10k → 500k</h1>
-            <p className="text-xs text-slate-400">AI-Powered Pairs Trading System · 2026 UI</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-8">
-          <div className="text-right">
-            <div className="text-3xl font-mono font-semibold">${portfolioValue.toLocaleString()}</div>
-            <div className="flex items-center gap-1 text-emerald-400 text-sm">
-              <TrendingUp className="w-4 h-4" /> +$286.12 (2.34%)
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold tracking-tight md:text-2xl">10k → 500k Command Center</h1>
+            <p className="mt-1 text-xs text-slate-300">Ground-up trading cockpit for focused, high-trust decision flow.</p>
+            <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Persona workflow lens">
+              {personas.map((persona) => (
+                <button
+                  key={persona}
+                  type="button"
+                  role="radio"
+                  aria-checked={activePersona === persona}
+                  onClick={() => setActivePersona(persona)}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                    activePersona === persona
+                      ? 'border-cyan-300/50 bg-cyan-500/20 text-cyan-100'
+                      : 'border-slate-500/35 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20'
+                  }`}
+                >
+                  {persona}
+                </button>
+              ))}
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-300 px-4 py-2 rounded-2xl text-sm font-medium border border-emerald-400/25">
-            <Activity className="w-4 h-4" /> LIVE
+        </div>
+
+        <div className="flex w-full flex-1 flex-wrap items-start justify-between gap-4 md:w-auto md:max-w-[560px] md:justify-end">
+          <div className="rounded-2xl border border-slate-400/25 bg-slate-500/10 px-4 py-3 text-left md:text-right">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">Portfolio Equity</p>
+            <p className="text-2xl font-semibold tabular-nums md:text-3xl">
+              {loading && !data
+                ? 'Loading…'
+                : `$${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            </p>
+            <p className={`mt-1 inline-flex items-center gap-1 text-sm ${pnlValue >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <Activity className="h-4 w-4" />
+              {pnlValue >= 0 ? '+' : ''}${Math.abs(pnlValue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {' '}
+              ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
+            </p>
+          </div>
+
+          <div className="space-y-2 text-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge label={`Session ${data?.sessionStatus ?? 'Loading'}`} tone={error ? 'critical' : 'positive'} />
+              <StatusBadge label={`Risk Budget ${riskBudgetPercent}%`} tone={riskTone} />
+            </div>
+            <div className="flex items-center gap-2 text-slate-300">
+              <ShieldCheck className="h-4 w-4 text-cyan-300" />
+              <span>{error ? `Data error: ${error}` : `Pre-trade checks ${data?.preTradeChecks ?? 'pending'}`}</span>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">
+              <Activity className="h-4 w-4" /> LIVE
+            </div>
           </div>
         </div>
       </div>

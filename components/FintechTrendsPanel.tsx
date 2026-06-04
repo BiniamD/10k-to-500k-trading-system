@@ -1,52 +1,49 @@
 'use client';
 
-import {
-  Bot,
-  ShieldCheck,
-  Sparkles,
-  BarChart3,
-  SlidersHorizontal,
-  Gauge,
-  Gem,
-  BellRing
-} from 'lucide-react';
+import { AlertTriangle, BrainCircuit, Clock3, ShieldCheck } from 'lucide-react';
+import Panel from '@/components/ui/Panel';
+import StatusBadge from '@/components/ui/StatusBadge';
+import { useApiData } from '@/frontend/hooks/useApiData';
+import { InsightsData } from '@/frontend/types/dashboard';
 
-const trends = [
-  { title: 'AI-Native Workflows', detail: 'Adaptive execution and risk nudges in real time.', icon: Bot },
-  { title: 'Trust-First Security Cues', detail: 'Visible data protection and consent transparency.', icon: ShieldCheck },
-  { title: 'Refined Glass Interfaces', detail: 'Layered depth with sharper contrast for readability.', icon: Sparkles },
-  { title: 'Story-Driven Data Visuals', detail: 'Signals and context merged into one decision surface.', icon: BarChart3 },
-  { title: 'Composable Personalization', detail: 'Role-based widgets and workflow-specific modules.', icon: SlidersHorizontal },
-  { title: 'Instant Performance Feedback', detail: 'Latency-aware controls with immediate status insight.', icon: Gauge },
-  { title: 'Premium Neo-Minimalism', detail: 'High-trust visual language with less cognitive noise.', icon: Gem },
-  { title: 'Proactive Micro-Interactions', detail: 'Subtle alerts that guide without overwhelming.', icon: BellRing }
-];
+const iconMap = [BrainCircuit, Clock3, ShieldCheck, AlertTriangle];
 
 export default function FintechTrendsPanel() {
-  return (
-    <section className="glass rounded-3xl p-8">
-      <div className="flex items-center justify-between mb-6 gap-4">
-        <div>
-          <h2 className="text-xl font-semibold">Top 8 Fintech Design Trends · 2026</h2>
-          <p className="text-sm text-slate-300 mt-1">Applied to the trading dashboard experience</p>
-        </div>
-        <span className="px-4 py-2 rounded-2xl panel-muted text-xs font-medium text-cyan-200">Trend Pack Enabled</span>
-      </div>
+  const { data, loading, error } = useApiData<InsightsData>('/api/insights', 15000);
+  const insights = data?.items ?? [];
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {trends.map((trend) => {
-          const Icon = trend.icon;
-          return (
-            <div key={trend.title} className="panel-muted rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:border-cyan-300/35">
-              <div className="w-9 h-9 rounded-xl bg-cyan-400/10 text-cyan-300 flex items-center justify-center mb-4">
-                <Icon className="w-5 h-5" />
-              </div>
-              <h3 className="font-semibold text-base">{trend.title}</h3>
-              <p className="text-sm text-slate-300 mt-2">{trend.detail}</p>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+  return (
+    <Panel
+      title="Operational Insights"
+      subtitle="Ground-up signal feed focused on short, decision-ready takeaways."
+      className="lg:col-span-12"
+      actions={<StatusBadge label={error ? 'Feed error' : loading && !data ? 'Loading feed' : 'Live intelligence feed'} tone={error ? 'critical' : 'info'} />}
+    >
+      {error ? (
+        <p className="text-sm text-rose-300">Unable to load insights: {error}</p>
+      ) : loading && insights.length === 0 ? (
+        <p className="text-sm text-slate-300">Loading operational insights…</p>
+      ) : insights.length === 0 ? (
+        <p className="text-sm text-slate-300">No operational insights available.</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {insights.map((insight, index) => {
+            const Icon = iconMap[index % iconMap.length];
+            return (
+              <article
+                key={insight.title}
+                className="rounded-xl border border-slate-500/30 bg-slate-500/10 p-4 transition-all hover:-translate-y-0.5 hover:border-cyan-300/35"
+              >
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-200">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-semibold">{insight.title}</h3>
+                <p className="mt-2 text-sm text-slate-300">{insight.detail}</p>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </Panel>
   );
 }
