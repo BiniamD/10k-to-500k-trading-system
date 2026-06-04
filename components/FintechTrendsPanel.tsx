@@ -24,7 +24,7 @@ export default function FintechTrendsPanel() {
   return (
     <Panel
       title="Signals"
-      className="lg:col-span-12"
+      className="col-span-12"
       actions={
         <StatusBadge
           label={error ? 'Error' : loading && !data ? '…' : `${insights.length} active`}

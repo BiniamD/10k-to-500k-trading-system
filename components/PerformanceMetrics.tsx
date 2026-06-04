@@ -12,7 +12,7 @@ export default function PerformanceMetrics() {
   return (
     <Panel
       title="Performance"
-      className="lg:col-span-12"
+      className="col-span-12"
       actions={
         <StatusBadge
           label={error ? 'Error' : loading && !data ? '…' : 'Live'}

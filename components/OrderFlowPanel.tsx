@@ -20,7 +20,7 @@ export default function OrderFlowPanel() {
   return (
     <Panel
       title="Order Flow"
-      className="lg:col-span-7"
+      className="col-span-12 lg:col-span-7"
       actions={
         <StatusBadge
           label={loading && !data ? '…' : `${buyPct}% Buy`}

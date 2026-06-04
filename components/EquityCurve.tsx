@@ -31,7 +31,7 @@ export default function EquityCurve() {
   return (
     <Panel
       title="Equity Curve"
-      className="lg:col-span-8"
+      className="col-span-12 lg:col-span-8"
       actions={
         <div className="flex items-center gap-2">
           <div className="flex gap-1" role="tablist" aria-label="Timeframe">

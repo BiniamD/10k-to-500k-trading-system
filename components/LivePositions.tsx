@@ -23,7 +23,7 @@ export default function LivePositions() {
   return (
     <Panel
       title="Positions"
-      className="lg:col-span-5"
+      className="col-span-12 lg:col-span-5"
       actions={
         <StatusBadge
           label={loading && !data ? '…' : `${positions.length} open`}

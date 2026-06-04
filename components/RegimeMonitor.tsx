@@ -28,7 +28,7 @@ export default function RegimeMonitor() {
   return (
     <Panel
       title="Market Regime"
-      className="lg:col-span-4"
+      className="col-span-12 lg:col-span-4"
       actions={
         <StatusBadge
           label={loading && !data ? '…' : r.state}
