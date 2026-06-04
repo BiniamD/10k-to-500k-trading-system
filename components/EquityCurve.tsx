@@ -19,11 +19,11 @@ const EMPTY: EquityData = {
 };
 
 export default function EquityCurve() {
-  const [tf, setTf] = useState<TF>('1H');
+  const [timeframe, setTimeframe] = useState<TF>('1H');
   const { data, loading, error } = useApiData<EquityData>('/api/equity', 5000);
 
   const eq: EquityData = data ?? EMPTY;
-  const series: EquityPoint[] = eq.timeframes[tf] ?? [];
+  const series: EquityPoint[] = eq.timeframes[timeframe] ?? [];
 
   const changePct  = eq.sessionChangePercent;
   const drawdownPct = eq.currentDrawdownPercent;
@@ -40,12 +40,12 @@ export default function EquityCurve() {
                 key={v}
                 type="button"
                 role="tab"
-                aria-selected={tf === v}
-                onClick={() => setTf(v)}
+                aria-selected={timeframe === v}
+                onClick={() => setTimeframe(v)}
                 style={{
-                  background: tf === v ? 'var(--bg-raised)' : 'transparent',
-                  border: `1px solid ${tf === v ? 'var(--border)' : 'transparent'}`,
-                  color: tf === v ? 'var(--text)' : 'var(--text-dim)',
+                  background: timeframe === v ? 'var(--bg-raised)' : 'transparent',
+                  border: `1px solid ${timeframe === v ? 'var(--border)' : 'transparent'}`,
+                  color: timeframe === v ? 'var(--text)' : 'var(--text-dim)',
                   borderRadius: '3px',
                   padding: '0.2rem 0.5rem',
                   fontSize: '0.7rem',

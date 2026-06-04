@@ -9,7 +9,7 @@ export default function MetricTile({
   delta?: string;
   tone?: 'positive' | 'negative' | 'neutral';
 }) {
-  const deltaClass = {
+  const toneClasses = {
     positive: 'metric-delta-positive',
     negative: 'metric-delta-negative',
     neutral:  'metric-delta-neutral',
@@ -19,7 +19,7 @@ export default function MetricTile({
     <article className="metric-tile" aria-label={label}>
       <p className="metric-label">{label}</p>
       <p className="metric-value">{value}</p>
-      {delta ? <p className={deltaClass[tone]}>{delta}</p> : null}
+      {delta ? <p className={toneClasses[tone]}>{delta}</p> : null}
     </article>
   );
 }
