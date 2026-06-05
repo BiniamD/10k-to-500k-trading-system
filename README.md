@@ -237,7 +237,7 @@ The system is pre-wired for **Alpaca paper trading** (zero real money at risk).
 ### 1. Get Alpaca credentials
 
 1. Sign up at <https://alpaca.markets> (free).
-2. In the dashboard select **Paper Trading**.
+2. In the dashboard, select **Paper Trading**.
 3. Copy your **API Key** and **Secret**.
 
 ### 2. Configure environment
