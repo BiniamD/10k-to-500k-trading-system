@@ -1,11 +1,3 @@
-polygon-api-client
-pyetrade
-deap
-stable-baselines3
-gymnasium
-hmmlearn
-numpy
-pandas
-scikit-learn
-backtesting
-yfinance
+# Backend Python dependencies – see the root requirements.txt for the full list.
+# Install from the project root: pip install -r requirements.txt
+-r ../requirements.txt

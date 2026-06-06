@@ -1,84 +1,104 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Panel from '@/components/ui/Panel';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useApiData } from '@/frontend/hooks/useApiData';
 import { RegimeData } from '@/frontend/types/dashboard';
 
-const defaultRegime: RegimeData = {
+const DEFAULT: RegimeData = {
   state: 'CALM',
   confidence: 0,
   vpin: 0,
   imbalance: 0,
-  message: 'Awaiting regime data.',
+  message: '—',
 };
+
+const STATE_COLOR = {
+  CALM:     'var(--green)',
+  BUSY:     'var(--amber)',
+  VOLATILE: 'var(--red)',
+} as const;
 
 export default function RegimeMonitor() {
   const { data, loading, error } = useApiData<RegimeData>('/api/regime', 5000);
-  const regime = data ?? defaultRegime;
-
-  const styleMap = {
-    CALM: {
-      badge: 'bg-emerald-500/12 text-emerald-200 border-emerald-400/40',
-      bar: 'bg-emerald-400',
-    },
-    BUSY: {
-      badge: 'bg-amber-500/12 text-amber-200 border-amber-400/40',
-      bar: 'bg-amber-400',
-    },
-    VOLATILE: {
-      badge: 'bg-rose-500/12 text-rose-200 border-rose-400/40',
-      bar: 'bg-rose-400',
-    },
-  } as const;
-
-  const tone = regime.state === 'VOLATILE' ? 'critical' : regime.state === 'BUSY' ? 'warning' : 'positive';
-  const trendStyle = styleMap[regime.state as keyof typeof styleMap] ?? styleMap.CALM;
+  const r = data ?? DEFAULT;
+  const color = STATE_COLOR[r.state as keyof typeof STATE_COLOR] ?? 'var(--text-dim)';
+  const tone  = r.state === 'VOLATILE' ? 'critical' : r.state === 'BUSY' ? 'warning' : 'positive';
 
   return (
     <Panel
       title="Market Regime"
-      subtitle="Current market pressure with toxicity and imbalance cues for execution quality."
-      className="lg:col-span-4"
-      actions={<StatusBadge label={loading && !data ? 'Loading' : regime.state} tone={error ? 'critical' : tone} />}
+      className="col-span-12 lg:col-span-4"
+      actions={
+        <StatusBadge
+          label={loading && !data ? '…' : r.state}
+          tone={error ? 'critical' : tone}
+          dot
+        />
+      }
     >
-      <motion.div
-        className={`inline-flex items-center rounded-xl border px-4 py-2 text-lg font-semibold ${trendStyle.badge}`}
-        initial={{ opacity: 0.65, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
+      {/* state label */}
+      <div style={{
+        fontFamily: 'var(--font-mono)',
+        fontSize: '1.6rem',
+        fontWeight: 700,
+        letterSpacing: '-0.02em',
+        color,
+        lineHeight: 1,
+      }}>
+        {loading && !data ? '—' : r.state}
+      </div>
+
+      {/* confidence bar */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-dim)', marginBottom: '0.35rem' }}>
+          <span>Confidence</span>
+          <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text)' }}>{r.confidence}%</span>
+        </div>
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: `${r.confidence}%`, background: color }} />
+        </div>
+      </div>
+
+      {/* metrics */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '0.5rem',
+      }}>
+        <div style={{ background: 'var(--bg-inset)', border: '1px solid var(--border-muted)', borderRadius: '3px', padding: '0.5rem 0.625rem' }}>
+          <div style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>VPIN</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 600, marginTop: '0.2rem' }}>{r.vpin.toFixed(2)}</div>
+        </div>
+        <div style={{ background: 'var(--bg-inset)', border: '1px solid var(--border-muted)', borderRadius: '3px', padding: '0.5rem 0.625rem' }}>
+          <div style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Imbalance</div>
+          <div style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            marginTop: '0.2rem',
+            color: r.imbalance > 0 ? 'var(--green)' : r.imbalance < 0 ? 'var(--red)' : 'var(--text)',
+          }}>
+            {r.imbalance > 0 ? '+' : ''}{r.imbalance}%
+          </div>
+        </div>
+      </div>
+
+      {/* message */}
+      <div
+        role="status"
+        aria-live="polite"
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--text-dim)',
+          background: 'var(--bg-inset)',
+          border: '1px solid var(--border-muted)',
+          borderRadius: '3px',
+          padding: '0.5rem 0.625rem',
+          lineHeight: 1.5,
+        }}
       >
-        {loading && !data ? 'Loading…' : regime.state}
-      </motion.div>
-
-      <div className="space-y-4">
-        <div>
-          <div className="mb-2 flex items-center justify-between text-sm text-slate-300">
-            <span>Confidence</span>
-            <span className="tabular-nums">{regime.confidence}%</span>
-          </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
-            <div className={`h-full rounded-full ${trendStyle.bar}`} style={{ width: `${regime.confidence}%` }} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-500/30 bg-slate-500/10 p-3">
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.16em] text-slate-400">VPIN Toxicity</div>
-            <div className="mt-1 text-xl font-medium tabular-nums">{regime.vpin.toFixed(2)}</div>
-          </div>
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.16em] text-slate-400">Volume Imbalance</div>
-            <div className={`mt-1 text-xl font-medium tabular-nums ${regime.imbalance > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {regime.imbalance > 0 ? '+' : ''}
-              {regime.imbalance}%
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-slate-500/30 bg-slate-500/10 px-3 py-2 text-sm text-slate-200" role="status" aria-live="polite">
-          {error ? `Failed to refresh regime: ${error}` : regime.message}
-        </div>
+        {error ? `Error: ${error}` : r.message}
       </div>
     </Panel>
   );

@@ -1,27 +1,69 @@
 'use client';
 
+import { useState } from 'react';
 import Header from '@/components/Header';
+import EquityCurve from '@/components/EquityCurve';
 import RegimeMonitor from '@/components/RegimeMonitor';
 import PerformanceMetrics from '@/components/PerformanceMetrics';
 import OrderFlowPanel from '@/components/OrderFlowPanel';
 import LivePositions from '@/components/LivePositions';
-import EquityCurve from '@/components/EquityCurve';
 import FintechTrendsPanel from '@/components/FintechTrendsPanel';
 
+type TabId = 'performance' | 'positions' | 'trends';
+
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'performance', label: 'Performance' },
+  { id: 'positions',   label: 'Positions'   },
+  { id: 'trends',      label: 'Trends'      },
+];
+
 export default function Dashboard() {
+  const [tab, setTab] = useState<TabId>('performance');
+
   return (
-    <div className="dashboard-root">
+    <div className="l5-root">
       <Header />
-      <main className="dashboard-shell" aria-label="Trading dashboard">
-        <section className="dashboard-grid" aria-label="Trading dashboard modules">
-          <EquityCurve />
+
+      <div className="l5-body">
+        {/* ── left 30%: regime + order flow ── */}
+        <aside className="l5-left">
           <RegimeMonitor />
-          <PerformanceMetrics />
           <OrderFlowPanel />
-          <LivePositions />
-          <FintechTrendsPanel />
-        </section>
-      </main>
+        </aside>
+
+        {/* ── right 70%: equity curve + tabbed panels ── */}
+        <div className="l5-right">
+          <div className="l5-equity">
+            <EquityCurve />
+          </div>
+
+          <div className="l5-tabbar" role="tablist" aria-label="Dashboard sections">
+            {TABS.map(({ id, label }) => (
+              <button
+                key={id}
+                id={`tab-${id}`}
+                role="tab"
+                aria-selected={tab === id}
+                aria-controls={`panel-${id}`}
+                className={`l5-tab-btn${tab === id ? ' active' : ''}`}
+                onClick={() => setTab(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div id="panel-performance" className="l5-panel" role="tabpanel" aria-labelledby="tab-performance" hidden={tab !== 'performance'}>
+            <PerformanceMetrics />
+          </div>
+          <div id="panel-positions" className="l5-panel" role="tabpanel" aria-labelledby="tab-positions" hidden={tab !== 'positions'}>
+            <LivePositions />
+          </div>
+          <div id="panel-trends" className="l5-panel" role="tabpanel" aria-labelledby="tab-trends" hidden={tab !== 'trends'}>
+            <FintechTrendsPanel />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

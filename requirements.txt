@@ -1,8 +1,9 @@
-yfinance
-pandas
-numpy
-matplotlib
-seaborn
-statsmodels
-plotly
-scikit-learn
+# ── Serverless API runtime dependencies ──────────────────────────
+# Only packages needed by the Vercel Lambda functions (api/*.py).
+# Heavy ML/RL/visualisation packages live in requirements-dev.txt.
+
+yfinance>=0.2.40
+pandas>=2.0
+numpy>=1.26
+statsmodels>=0.14
+scikit-learn>=1.5
