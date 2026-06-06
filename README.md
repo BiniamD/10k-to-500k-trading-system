@@ -90,7 +90,8 @@ git clone https://github.com/BiniamD/10k-to-500k-trading-system.git
 cd 10k-to-500k-trading-system
 
 # 2. Install Python dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt          # API runtime (serverless)
+pip install -r requirements-dev.txt      # ML/training stack (local dev only)
 
 # 3. Install Node dependencies
 npm install
@@ -128,7 +129,11 @@ Create `.env.local` (for local Next.js dev) or set these in your Vercel project 
 ### Install
 
 ```bash
+# Serverless API runtime (also installed by Vercel automatically):
 pip install -r requirements.txt
+
+# Full ML / training / backtesting stack (local development only):
+pip install -r requirements-dev.txt
 ```
 
 ### Key modules
@@ -248,7 +253,7 @@ ALPACA_API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ALPACA_BASE_URL=https://paper-api.alpaca.markets
 ```
 
-### 3. Install the Alpaca SDK (already in `requirements.txt`)
+### 3. Install the Alpaca SDK (in `requirements-dev.txt`)
 
 ```bash
 pip install alpaca-py
@@ -396,7 +401,8 @@ Tests live in `frontend/__tests__/` (Jest + React Testing Library).
 │   └── backtest_pairs.py       # Vectorised backtest runner
 ├── tests/                      # Python unit tests
 ├── main.py                     # CLI entry-point
-├── requirements.txt            # Python dependencies
+├── requirements.txt            # Python API runtime dependencies (Vercel)
+├── requirements-dev.txt        # Full ML/training stack (local dev only)
 ├── package.json                # Node dependencies + scripts
 ├── next.config.js
 ├── tailwind.config.js

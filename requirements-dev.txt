@@ -1,0 +1,33 @@
+# ── Full ML / training / backtesting stack ────────────────────────
+# Install locally for strategy development, backtesting, and RL training.
+# NOT used by the Vercel serverless functions (see requirements.txt).
+#
+#   pip install -r requirements-dev.txt
+
+# ── Core data & analysis ──────────────────────────────────────────
+yfinance>=0.2.40
+pandas>=2.0
+numpy>=1.26
+scipy>=1.13
+statsmodels>=0.14
+
+# ── Machine learning & RL ─────────────────────────────────────────
+scikit-learn>=1.5
+stable-baselines3>=2.3
+gymnasium>=0.29
+hmmlearn>=0.3
+
+# ── Strategy optimisation ─────────────────────────────────────────
+deap>=1.4
+
+# ── Backtesting ───────────────────────────────────────────────────
+backtesting>=0.3
+
+# ── Visualisation (optional, for notebooks/reports) ───────────────
+matplotlib>=3.8
+seaborn>=0.13
+plotly>=5.22
+
+# ── Broker / market-data APIs (sandbox trading) ───────────────────
+alpaca-py>=0.26          # Alpaca Markets REST + streaming (paper trading)
+polygon-api-client>=1.14 # Polygon.io historical + real-time data
