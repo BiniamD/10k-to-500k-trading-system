@@ -40,7 +40,9 @@ export default function EquityCurve() {
                 key={v}
                 type="button"
                 role="tab"
+                id={`timeframe-tab-${v}`}
                 aria-selected={timeframe === v}
+                aria-controls={`timeframe-panel-${v}`}
                 onClick={() => setTimeframe(v)}
                 style={{
                   background: timeframe === v ? 'var(--bg-raised)' : 'transparent',
@@ -72,7 +74,12 @@ export default function EquityCurve() {
       ) : series.length === 0 ? (
         <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>No data</p>
       ) : (
-        <>
+        <div
+          id={`timeframe-panel-${timeframe}`}
+          role="tabpanel"
+          aria-labelledby={`timeframe-tab-${timeframe}`}
+          style={{ display: 'contents' }}
+        >
           {/* stat bar */}
           <div style={{
             display: 'flex',
@@ -163,7 +170,7 @@ export default function EquityCurve() {
               Drawdown
             </span>
           </div>
-        </>
+        </div>
       )}
     </Panel>
   );

@@ -44,7 +44,7 @@ export default function Dashboard() {
                 id={`tab-${id}`}
                 role="tab"
                 aria-selected={tab === id}
-                aria-controls="tab-panel"
+                aria-controls={`panel-${id}`}
                 className={`l5-tab-btn${tab === id ? ' active' : ''}`}
                 onClick={() => setTab(id)}
               >
@@ -53,10 +53,14 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div id="tab-panel" className="l5-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
-            {tab === 'performance' && <PerformanceMetrics />}
-            {tab === 'positions'   && <LivePositions />}
-            {tab === 'trends'      && <FintechTrendsPanel />}
+          <div id="panel-performance" className="l5-panel" role="tabpanel" aria-labelledby="tab-performance" hidden={tab !== 'performance'}>
+            <PerformanceMetrics />
+          </div>
+          <div id="panel-positions" className="l5-panel" role="tabpanel" aria-labelledby="tab-positions" hidden={tab !== 'positions'}>
+            <LivePositions />
+          </div>
+          <div id="panel-trends" className="l5-panel" role="tabpanel" aria-labelledby="tab-trends" hidden={tab !== 'trends'}>
+            <FintechTrendsPanel />
           </div>
         </div>
       </div>
