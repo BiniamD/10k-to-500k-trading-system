@@ -37,10 +37,14 @@ export default function Dashboard() {
             <EquityCurve />
           </div>
 
-          <div className="l5-tabbar">
+          <div className="l5-tabbar" role="tablist" aria-label="Dashboard sections">
             {TABS.map(({ id, label }) => (
               <button
                 key={id}
+                id={`tab-${id}`}
+                role="tab"
+                aria-selected={tab === id}
+                aria-controls="tab-panel"
                 className={`l5-tab-btn${tab === id ? ' active' : ''}`}
                 onClick={() => setTab(id)}
               >
@@ -49,7 +53,7 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="l5-panel">
+          <div id="tab-panel" className="l5-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
             {tab === 'performance' && <PerformanceMetrics />}
             {tab === 'positions'   && <LivePositions />}
             {tab === 'trends'      && <FintechTrendsPanel />}
